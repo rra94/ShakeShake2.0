@@ -13,6 +13,11 @@
 |:---:|:---:|:---:|:---:|
 |ResNeXt29-2x4x64d | TODO |15.58 | 15.20|
 
+
+## Future Steps
+
+Rplace BatchNorm with Fixup initalization
+
 ## Train ResNet29-2x64d  with cutout size 8 and SGD optimizer for CIFAR-100 
 ```
 python train.py --label 100 --depth 29 --w_base 64 --lr 0.025 --epochs 1800 --batch_size 128  --half_length=8 --optimizer='sdg'
