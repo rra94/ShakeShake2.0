@@ -1,32 +1,116 @@
-# Shake-Shake Regularization with cutout and adabound optimizer
+# Shake-Shake Regularization with Cutout and Optimizer
+
+## Task
+
+Achieve State of the ART(SOTA) on [CIFAR-100](https://www.cs.toronto.edu/~kriz/cifar.html).
+
+### Dataset details
+
+This dataset has 100 classes containing 600 images each. There are 500 training images and 100 testing images per class. The 100 classes in the CIFAR-100 are grouped into 20 superclasses. Each image comes with a "fine" label (the class to which it belongs) and a "coarse" label (the superclass to which it belongs). 
+
+We perform 100 class-classification. 
+
 
 ## Methodology choices
 
-### State of the Art (as of Apr'19)
+Here we discuss the design choices for our experiments. 
 
-### Cutout
+### Model
 
-## Error-Rate
+* ResNeXt:  We use the ResNeXt29-2x4x64d ().
 
-### CIFAR-100
-|Model|This implementaion |Shake-shake|Shake-shake with cutout|
+### Weight Initialization
+
+* Random 
+
+### Data Agumentation
+
+* 
+* Cutout 
+
+### Otimizers
+
+* SGD
+* Adabound
+* SWA
+
+### Normalization
+
+### Dropout
+
+
+## Results
+
+All experiments are run on one NVIDIA RTX2080 Ti. 
+
+### CIFAR-100 (Best shot Error Rate)
+
+|Model|This implementaion |Epochs |Paper|
 |:---:|:---:|:---:|:---:|
-|ResNeXt29-2x4x64d | TODO |15.58 | 15.20|
+|ResNeXt29-2x4x64d | TODO | |15.58 |
+|ResNeXt29-2x4x64d + cutout + SDG| TODO | 1800| 15.20|
+|ResNeXt29-2x4x64d + cutout + ADABOUND| TODO  | 1800 |NA|
+|ResNeXt29-2x4x64d + cutout + SWA| TODO | |NA|
+|State of the Art([GPIPE](https://arxiv.org/pdf/1811.06965v4.pdf)) |  - | - | 9.43|
 
+
+Our method achieves results comparable to 
 
 ## Future Steps
 
-Replace BatchNorm with Fixup initalization
+* Replace BatchNorm with Fixup initalization
 
-try dropblock instead of cutout
+* Try dropblock instead of cutout
 
-try pyramidnet+shakeDrop
+* Try pyramidnet+shakeDrop
 
 ## Train ResNet29-2x64d  with cutout size 8 and SGD optimizer for CIFAR-100 
+
+### Dependencies
+
+* Pytorch 1.0.1
+* Python 3.6+ 
+* Install all from requirements.txt
+
 ```
-python train.py --label 100 --depth 29 --w_base 64 --lr 0.025 --epochs 1800 --batch_size 128  --half_length=8 --optimizer='sdg'
+CUDA_VISIBLE_DEVICES=0,1 python train.py --label 100 --depth 29 --w_base 64 --lr 0.025 --epochs 1800 --batch_size 128  --half_length=8 --optimizer='sdg'
 ```
+
+### Execution options
+
+* This code has parallel capabilites, use `CUDA_VISIBLE` to add devices
+* Switch optimizers with `--optimizer`. Available SGD, ADABOUND, SWA
+* set cutout with `--half_length`
+* added capability for many cutouts with `--nholes'
+* batch evaluation with `--eval_freq`
+* switch cifar 10 and 100 with `-label 100`
+* set learning rate `--lr` (intial learning rates for SWA, ADABOUND)
+* set epochs with `-epochs
+* set momentum with `--momentum`
+* Change depth of resnet `--depth`
+* change weight decay `--weight_decay`
+* set batch size `--batch_size`
+
+
+### SWA Functionality
+* set swa learning rate `--swa_lr`
+* set start epoch for swa `-swa_start`
+
+
 ## References
+
+
+[RESNEXT](https://github.com/facebookresearch/ResNeXt)
+```
+@inproceedings{xie2017aggregated,
+  title={Aggregated residual transformations for deep neural networks},
+  author={Xie, Saining and Girshick, Ross and Doll{\'a}r, Piotr and Tu, Zhuowen and He, Kaiming},
+  booktitle={Proceedings of the IEEE conference on computer vision and pattern recognition},
+  pages={1492--1500},
+  year={2017}
+}
+
+```
 
 [Improved Regularization of Convolutional Neural Networks with Cutout.](https://github.com/uoguelph-mlrg/Cutout).
 ```
@@ -57,6 +141,16 @@ python train.py --label 100 --depth 29 --w_base 64 --lr 0.025 --epochs 1800 --ba
   month = {May},
   year = {2019},
   address = {New Orleans, Louisiana}
+}
+```
+
+[Averaging Weights Leads to Wider Optima and Better Generalization](https://github.com/izmailovpavel/contrib_swa_examples)
+```
+@article{izmailov2018averaging,
+  title={Averaging Weights Leads to Wider Optima and Better Generalization},
+  author={Izmailov, Pavel and Podoprikhin, Dmitrii and Garipov, Timur and Vetrov, Dmitry and Wilson, Andrew Gordon},
+  journal={arXiv preprint arXiv:1803.05407},
+  year={2018}
 }
 ```
 
