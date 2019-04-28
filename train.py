@@ -101,25 +101,16 @@ def main(args):
         bar.close()
         
         #eval
+        test_loss, test_acc, test_n = utils.eval_epoch(test_loader, model)
         
-        model.eval()
-        test_loss, test_acc, test_n = 0, 0, 0
-        
-        for x, t in tqdm(test_loader, total=len(test_loader), leave=False):
-            with torch.no_grad():
-                x, t = Variable(x.cuda()), Variable(t.cuda())
-                y = model(x)
-                loss = loss_func(y, t)
-                test_loss += loss.item() * t.size(0)
-                test_acc += utils.accuracy(y, t).item()
-                test_n += t.size(0)
         logger.write(e+1, lr, train_loss / train_n, test_loss / test_n,
                      train_acc / train_n * 100, test_acc / test_n * 100)
         
-        if args.optimizer =='swa'  and (epoch + 1) >= args.swa_start and args.eval_freq>1:
+        if args.optimizer =='swa'  and (e + 1) >= args.swa_start and args.eval_freq>1:
             if e == 0 or e % args.eval_freq == args.eval_freq - 1 or e == args.epochs - 1:
                 opt.swap_swa_sgd()
                 opt.bn_update(train_loaders, model, device='cuda')
+                #swa_res = utils.eval_epoch(test_loaders['test'], model)
                 opt.swap_swa_sgd()
 
 if __name__ == "__main__":

@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*  
-
+import torch
 import os
 import math
 import json
 from datetime import datetime
 import torch 
 import numpy as np
+from tqdm import tqdm
+import torch.nn as nn
 
 def adjust_learning_rate(optimizer, lr):
     for param_group in optimizer.param_groups:
@@ -55,6 +57,25 @@ class cutout(object):
         mask = mask.expand_as(img)
         img = img * mask
         return img
+
+def eval_epoch(test_loader, model):
+    loss_func= nn.CrossEntropyLoss().cuda()
+    model.eval()
+    test_loss =0.0
+    test_acc =0.0
+    test_n =0.0
+
+    for x, t in tqdm(test_loader, total=len(test_loader), leave=False):
+        #if criterion=='swa':
+
+        with torch.no_grad():
+            x, t = Variable(x.cuda()), Variable(t.cuda())
+            y = model(x)
+            loss = loss_func(y, t)
+            test_loss += loss.item() * t.size(0)
+            test_acc += utils.accuracy(y, t).item()
+            test_n += t.size(0)
+    return (test_loss, test_acc, test_n) 
 
 class Logger:
 
