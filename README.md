@@ -1,4 +1,4 @@
-# Shake-Shake Regularization2.0
+# Shake-Shake Regularization with cutout and adabound optimizer
 
 ## Methodology choices
 
@@ -38,7 +38,7 @@ python train.py --label 100 --depth 29 --w_base 64 --lr 0.025 --epochs 1800 --ba
 }
 ```
 
-[Adaptive Gradient Methods with Dynamic Bound of Learning Rate] (https://github.com/Luolc/AdaBound).
+[Adaptive Gradient Methods with Dynamic Bound of Learning Rate](https://github.com/Luolc/AdaBound).
 
 ```text
 @inproceedings{Luo2019AdaBound,
@@ -51,4 +51,4 @@ python train.py --label 100 --depth 29 --w_base 64 --lr 0.025 --epochs 1800 --ba
 }
 ```
 
-This code is built over [this repo] (https://github.com/owruby/shake-shake_pytorch)
+This code is built over [this repo](https://github.com/owruby/shake-shake_pytorch)
