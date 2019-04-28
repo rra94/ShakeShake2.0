@@ -16,7 +16,11 @@
 
 ## Future Steps
 
-Rplace BatchNorm with Fixup initalization
+Replace BatchNorm with Fixup initalization
+
+try dropblock instead of cutout
+
+try pyramidnet+shakeDrop
 
 ## Train ResNet29-2x64d  with cutout size 8 and SGD optimizer for CIFAR-100 
 ```
