@@ -2,7 +2,7 @@
 
 ## Task
 
-Achieve State of the ART(SOTA) on [CIFAR-100](https://www.cs.toronto.edu/~kriz/cifar.html).
+Achieve State of the ART(SOTA) on [CIFAR-100](https://www.cs.toronto.edu/~kriz/cifar.html). The inspiration comes from [this](https://paperswithcode.com/sota/image-classification-on-cifar-100) table.
 
 ### Dataset details
 
@@ -47,10 +47,11 @@ All experiments are run on one NVIDIA RTX2080 Ti.
 
 |Model|This implementaion |Epochs |Paper|
 |:---:|:---:|:---:|:---:|
-|ResNeXt29-2x4x64d | TODO | |15.58 |
-|ResNeXt29-2x4x64d + cutout + SDG| TODO | 1800| 15.20|
-|ResNeXt29-2x4x64d + cutout + ADABOUND| TODO  | 1800 |NA|
-|ResNeXt29-2x4x64d + cutout + SWA| TODO | |NA|
+|ResNeXt29-2x4x64d | TODO | |16.56 |
+|ResNeXt29-2x4x64d + shakeshake | TODO | |15.58 |
+|ResNeXt29-2x4x64d + shakeshake+  cutout + SDG| TODO | 1800| 15.20|
+|ResNeXt29-2x4x64d + shakeshake + cutout + ADABOUND| TODO  | 1800 |NA|
+|ResNeXt29-2x4x64d + shakeshake + cutout + SWA| TODO | |NA|
 |State of the Art([GPIPE](https://arxiv.org/pdf/1811.06965v4.pdf)) |  - | - | 9.43|
 
 
