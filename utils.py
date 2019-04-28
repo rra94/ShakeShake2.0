@@ -7,6 +7,11 @@ from datetime import datetime
 import torch 
 import numpy as np
 
+def adjust_learning_rate(optimizer, lr):
+    for param_group in optimizer.param_groups:
+        param_group['lr'] = lr
+        return lr
+
 
 def prepare_pt_context(num_gpus,batch_size):
     use_cuda = (num_gpus > 0)

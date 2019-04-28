@@ -9,6 +9,8 @@ import torch.backends.cudnn as cudnn
 from torch.autograd import Variable
 import adabound as abd
 
+from torchcontrib.optim.swa import SWA
+
 from tqdm import tqdm
 
 import utils
@@ -34,6 +36,17 @@ def main(args):
     
     cudnn.benckmark = True
     
+    def schedule(epoch):
+        t = (epoch) / (args.swa_start if args.swa else args.epochs)
+        lr_ratio = args.swa_lr / args.lr_init if args.swa else 0.01
+        if t <= 0.5:
+            factor = 1.0
+        elif t <= 0.9:
+            factor = 1.0 - (1.0 - lr_ratio) * (t - 0.5) / 0.4
+        else:
+            factor = lr_ratio
+        return args.lr_init * factor
+    
     if args.optimizer=='sdg':
         opt = optim.SGD(model.parameters(),lr=args.lr,momentum=0.9,weight_decay=args.weight_decay,nesterov=args.nesterov)
     
@@ -42,13 +55,24 @@ def main(args):
     
     loss_func = nn.CrossEntropyLoss().cuda()
 
+    if args.optimizer=='swa':
+        optimizer=optim.SGD(model.parameters(), lr=lr, momentum=args.momentum, wright_decay=args.weight_decay)
+        steps_per_epoch = len(train_loader.dataset) / args.batch_size
+        steps_per_epoch = int(steps_per_epoch)
+        optimizer = SWA(optimizer, swa_start=args.swa_start * steps_per_epoch,swa_freq=steps_per_epoch, swa_lr=args.swa_lr)
 
+    
 
     headers = ["Epoch", "LearningRate", "TrainLoss", "TestLoss", "TrainAcc.", "TestAcc."]
     logger = utils.Logger(args.checkpoint, headers)
     
     for e in range(args.epochs):
-        lr = utils.cosine_lr(opt, args.lr, e, args.epochs)
+        if args.optimizer=='swa':
+            lr= schedule(epoch)
+            utils.adjust_learning_rate(optimizer, lr)
+        else:    
+            lr = utils.cosine_lr(opt, args.lr, e, args.epochs)
+     
         model.train()
         train_loss, train_acc, train_n = 0, 0, 0
         bar = tqdm(total=len(train_loader), leave=False)
@@ -68,7 +92,8 @@ def main(args):
                 train_loss / train_n, train_acc / train_n * 100), refresh=True)
             bar.update()
         bar.close()
-
+        
+        #eval
         model.eval()
         test_loss, test_acc, test_n = 0, 0, 0
         
@@ -103,6 +128,8 @@ if __name__ == "__main__":
     parser.add_argument("--nholes", type=int, default=1)
     #new-optimizers
     parser.add_argument("--optimizer", type=str, default='sdg')
-    
+    parser.add_argument('--swa_start', type=float, default=161)
+    parser.add_argument('--swa_lr', type=float, default=0.05)
+
     args = parser.parse_args()
     main(args)
