@@ -16,29 +16,43 @@ from datasets import load_dataset
 from models import ShakeResNet, ShakeResNeXt
 
 
+
+
 def main(args):
+    
+    if torch.cuda.device_count() > 1:
+        print("Let's use", torch.cuda.device_count(), "GPUs!")
+
     train_loader, test_loader = load_dataset(args.label, args.batch_size, args.half_length, args.nholes)
+    
     if args.label == 10:
         model = ShakeResNet(args.depth, args.w_base, args.label)
     else:
         model = ShakeResNeXt(args.depth, args.w_base, args.cardinary, args.label)
+    
     model = torch.nn.DataParallel(model).cuda()
+    
     cudnn.benckmark = True
+    
     if args.optimizer=='sdg':
         opt = optim.SGD(model.parameters(),lr=args.lr,momentum=0.9,weight_decay=args.weight_decay,nesterov=args.nesterov)
+    
     if args.optimizer == 'abd':
-        opt= abd.Adabound(model.parameters(), lr=args.lr, gamma= 0.9, weight_decay=args.weight_decay, final_lr=0.1)
+        opt= abd.AdaBound(model.parameters(), lr=args.lr, gamma= 0.9, weight_decay=args.weight_decay, final_lr=0.1)
+    
     loss_func = nn.CrossEntropyLoss().cuda()
 
 
 
     headers = ["Epoch", "LearningRate", "TrainLoss", "TestLoss", "TrainAcc.", "TestAcc."]
     logger = utils.Logger(args.checkpoint, headers)
+    
     for e in range(args.epochs):
         lr = utils.cosine_lr(opt, args.lr, e, args.epochs)
         model.train()
         train_loss, train_acc, train_n = 0, 0, 0
         bar = tqdm(total=len(train_loader), leave=False)
+        
         for x, t in train_loader:
             x, t = Variable(x.cuda()), Variable(t.cuda())
             y = model(x)
@@ -57,6 +71,7 @@ def main(args):
 
         model.eval()
         test_loss, test_acc, test_n = 0, 0, 0
+        
         for x, t in tqdm(test_loader, total=len(test_loader), leave=False):
             with torch.no_grad():
                 x, t = Variable(x.cuda()), Variable(t.cuda())
@@ -88,5 +103,6 @@ if __name__ == "__main__":
     parser.add_argument("--nholes", type=int, default=1)
     #new-optimizers
     parser.add_argument("--optimizer", type=str, default='sdg')
+    
     args = parser.parse_args()
     main(args)

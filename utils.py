@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*
+# -*- coding: utf-8 -*  
 
 import os
 import math
@@ -7,6 +7,11 @@ from datetime import datetime
 import torch 
 import numpy as np
 
+
+def prepare_pt_context(num_gpus,batch_size):
+    use_cuda = (num_gpus > 0)
+    batch_size *= max(1, num_gpus)
+    return use_cuda, batch_size
 
 def cosine_lr(opt, base_lr, e, epochs):
     lr = 0.5 * base_lr * (math.cos(math.pi * e / epochs) + 1)
