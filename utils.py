@@ -37,6 +37,10 @@ class cutout(object):
         self.n_holes = nholes
         self.length = half_length
     def __call__(self, img):
+        if self.n_holes ==0:
+            #print("no cutout")
+            return img
+
         h,w = img.size(1), img.size(2)
         mask = np.ones((h, w), np.float32)
         for n in range(self.n_holes):
