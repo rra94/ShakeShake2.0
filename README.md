@@ -81,7 +81,7 @@ CUDA_VISIBLE_DEVICES=0,1 python train.py --label 100 --depth 29 --w_base 64 --lr
 * This code has parallel capabilites, use `CUDA_VISIBLE` to add devices
 * Switch optimizers with `--optimizer`. Available SGD, ADABOUND, SWA
 * set cutout with `--half_length`
-* added capability for many cutouts with `--nholes'
+* added capability for many cutouts with `--nholes`. Set to 0 for no cutout.
 * batch evaluation with `--eval_freq`
 * switch cifar 10 and 100 with `-label 100`
 * set learning rate `--lr` (intial learning rates for SWA, ADABOUND)
