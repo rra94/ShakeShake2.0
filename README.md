@@ -1,44 +1,54 @@
-# Shake-Shake regularization
-PyTorch implementation of shake-shake regularization.
-Author implementations is [here](https://github.com/xgastaldi/shake-shake).
+# Shake-Shake Regularization2.0
 
-## Dependencies
-- python 3.5
-- PyTorch 1.0.0
+## Methodology choices
 
-## Accuracy
+### State of the Art (as of Apr'19)
 
-### CIFAR-10
-|Model|Method|This implementaion |Paper|
-|:---:|:---:|:---:|:---:|
-|ResNet26-2x32|S-S-I|96.37|96.45|
-|ResNet26-2x64|S-S-I|97.07|97.02|
+### Cutout
 
-![CIFAR-10](checkpoint/cifar10.png)
+## Error-Rate
 
 ### CIFAR-100
-|Model|Method|This implementaion |Paper|
-|:---:|:---:|:---:|:---:|
-|ResNeXt29-2x4x64d|S-S-I|TODO|84.03|
+|Model|This implementaion |Shake-shake|Shake-shake with cutout|
+|:---:|:---:|:---:||:---:||:---:|
+|ResNeXt29-2x4x64d |15.58 | 15.20|
 
-## Train ResNet26-2x64d for CIFAR-10
+## Train ResNet29-2x64d  with cutout size 8 and SGD optimizer for CIFAR-100 
 ```
-python train.py --label 10 --depth 26 --w_base 64 --lr 0.1 --epochs 1800 --batch_size 64
+python train.py --label 100 --depth 29 --w_base 64 --lr 0.025 --epochs 1800 --batch_size 128  --half_length=8 --optimizer='sdg'
 ```
-
-## Effects of learning epoch on accuracy
-|Model|Method|Epoch|This implementaion |Paper|
-|:---:|:---:|:---:|:---:|:---:|
-|ResNet26-2x64|S-S-I|300|96.46|-|
-|ResNet26-2x64|S-S-I|600|96.65|-|
-|ResNet26-2x64|S-S-I|900|96.78|-|
-|ResNet26-2x64|S-S-I|1200|96.68|-|
-|ResNet26-2x64|S-S-I|1500|96.77|-|
-|ResNet26-2x64|S-S-I|1800|97.07|97.02|
-
 ## References
-Gastaldi, Xavier. "Shake-Shake regularization."
-[arXiv:1705.07485v2](https://arxiv.org/abs/1705.07485)
 
-Gastaldi, Xavier. "Shake-Shake regularization of 3-branch residual networks."
-[ICLR2017 Workshop](https://openreview.net/forum?id=HkO-PCmYl)
+[Improved Regularization of Convolutional Neural Networks with Cutout.](https://github.com/uoguelph-mlrg/Cutout).
+```
+@article{devries2017cutout,  
+  title={Improved Regularization of Convolutional Neural Networks with Cutout},  
+  author={DeVries, Terrance and Taylor, Graham W},  
+  journal={arXiv preprint arXiv:1708.04552},  
+  year={2017}  
+}
+```
+[Shake-shake regularization](https://github.com/xgastaldi/shake-shake).
+```
+@article{gastaldi2017shake,
+  title={Shake-shake regularization},
+  author={Gastaldi, Xavier},
+  journal={arXiv preprint arXiv:1705.07485},
+  year={2017}
+}
+```
+
+[Adaptive Gradient Methods with Dynamic Bound of Learning Rate] (https://github.com/Luolc/AdaBound).
+
+```text
+@inproceedings{Luo2019AdaBound,
+  author = {Luo, Liangchen and Xiong, Yuanhao and Liu, Yan and Sun, Xu},
+  title = {Adaptive Gradient Methods with Dynamic Bound of Learning Rate},
+  booktitle = {Proceedings of the 7th International Conference on Learning Representations},
+  month = {May},
+  year = {2019},
+  address = {New Orleans, Louisiana}
+}
+```
+
+This code is built over [this repo] (https://github.com/owruby/shake-shake_pytorch)
