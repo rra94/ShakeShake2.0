@@ -9,7 +9,7 @@ import torch.backends.cudnn as cudnn
 from torch.autograd import Variable
 import adabound as abd
 
-from torchcontrib.optim.swa import SWA
+from swa import swa
 
 from tqdm import tqdm
 
@@ -59,7 +59,7 @@ def main(args):
         optimizer=optim.SGD(model.parameters(), lr=lr, momentum=args.momentum, wright_decay=args.weight_decay)
         steps_per_epoch = len(train_loader.dataset) / args.batch_size
         steps_per_epoch = int(steps_per_epoch)
-        optimizer = SWA(optimizer, swa_start=args.swa_start * steps_per_epoch,swa_freq=steps_per_epoch, swa_lr=args.swa_lr)
+        optimizer = swa(optimizer, swa_start=args.swa_start * steps_per_epoch,swa_freq=steps_per_epoch, swa_lr=args.swa_lr)
 
     
 
