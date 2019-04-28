@@ -37,8 +37,8 @@ def main(args):
     cudnn.benckmark = True
     
     def schedule(epoch):
-        t = (epoch) / (args.swa_start if args.swa else args.epochs)
-        lr_ratio = args.swa_lr / args.lr_init if args.swa else 0.01
+        t = (epoch) / (args.swa_start if args.optimizer=='swa' else args.epochs)
+        lr_ratio = args.swa_lr / args.lr_init if args.optimizer=='swa' else 0.01
         if t <= 0.5:
             factor = 1.0
         elif t <= 0.9:
@@ -64,15 +64,21 @@ def main(args):
     
 
     headers = ["Epoch", "LearningRate", "TrainLoss", "TestLoss", "TrainAcc.", "TestAcc."]
-    logger = utils.Logger(args.checkpoint, headers)
     
+    if args.optimizer=='swa':
+        headers = headers[:-1] + ['swa_te_loss', 'swa_te_acc'] + headers[-1:]
+        swa_res = {'loss': None, 'accuracy': None}
+    
+    logger = utils.Logger(args.checkpoint, headers)
+
     for e in range(args.epochs):
         if args.optimizer=='swa':
             lr= schedule(epoch)
             utils.adjust_learning_rate(optimizer, lr)
         else:    
             lr = utils.cosine_lr(opt, args.lr, e, args.epochs)
-     
+        
+        #train
         model.train()
         train_loss, train_acc, train_n = 0, 0, 0
         bar = tqdm(total=len(train_loader), leave=False)
@@ -94,6 +100,7 @@ def main(args):
         bar.close()
         
         #eval
+        
         model.eval()
         test_loss, test_acc, test_n = 0, 0, 0
         
@@ -107,7 +114,12 @@ def main(args):
                 test_n += t.size(0)
         logger.write(e+1, lr, train_loss / train_n, test_loss / test_n,
                      train_acc / train_n * 100, test_acc / test_n * 100)
-
+        
+        if args.optimizer =='swa'  and (epoch + 1) >= args.swa_start and args.eval_freq>1:
+            if epoch == 0 or epoch % args.eval_freq == args.eval_freq - 1 or epoch == args.epochs - 1:
+                optimizer.swap_swa_sgd()
+                optimizer.bn_update(train_loaders, model, device='cuda')
+                optimizer.swap_swa_sgd()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -130,6 +142,8 @@ if __name__ == "__main__":
     parser.add_argument("--optimizer", type=str, default='sdg')
     parser.add_argument('--swa_start', type=float, default=161)
     parser.add_argument('--swa_lr', type=float, default=0.05)
-
+    #BatchEVAL
+    parser.add_argument('--eval_freq', type= int, default=1)
+    
     args = parser.parse_args()
     main(args)
