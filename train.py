@@ -38,43 +38,44 @@ def main(args):
     
     def schedule(epoch):
         t = (epoch) / (args.swa_start if args.optimizer=='swa' else args.epochs)
-        lr_ratio = args.swa_lr / args.lr_init if args.optimizer=='swa' else 0.01
+        lr_ratio = args.swa_lr / args.lr if args.optimizer=='swa' else 0.01
         if t <= 0.5:
             factor = 1.0
         elif t <= 0.9:
             factor = 1.0 - (1.0 - lr_ratio) * (t - 0.5) / 0.4
         else:
             factor = lr_ratio
-        return args.lr_init * factor
+        return args.lr * factor
     
     if args.optimizer=='sdg':
-        opt = optim.SGD(model.parameters(),lr=args.lr,momentum=0.9,weight_decay=args.weight_decay,nesterov=args.nesterov)
+        opt = optim.SGD(model.parameters(),lr=args.lr,momentum=args.momentum ,weight_decay=args.weight_decay,nesterov=args.nesterov)
     
     if args.optimizer == 'abd':
-        opt= abd.AdaBound(model.parameters(), lr=args.lr, gamma= 0.9, weight_decay=args.weight_decay, final_lr=0.1)
+        opt= abd.AdaBound(model.parameters(), lr=args.lr, gamma= args.momentum, weight_decay=args.weight_decay, final_lr=0.1)
     
     loss_func = nn.CrossEntropyLoss().cuda()
 
     if args.optimizer=='swa':
-        optimizer=optim.SGD(model.parameters(), lr=lr, momentum=args.momentum, wright_decay=args.weight_decay)
+        opt=optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
         steps_per_epoch = len(train_loader.dataset) / args.batch_size
         steps_per_epoch = int(steps_per_epoch)
-        optimizer = swa(optimizer, swa_start=args.swa_start * steps_per_epoch,swa_freq=steps_per_epoch, swa_lr=args.swa_lr)
+        opt = swa(opt, swa_start=args.swa_start * steps_per_epoch,swa_freq=steps_per_epoch, swa_lr=args.swa_lr)
 
     
 
     headers = ["Epoch", "LearningRate", "TrainLoss", "TestLoss", "TrainAcc.", "TestAcc."]
     
-    if args.optimizer=='swa':
-        headers = headers[:-1] + ['swa_te_loss', 'swa_te_acc'] + headers[-1:]
-        swa_res = {'loss': None, 'accuracy': None}
+    #if args.optimizer=='swa':
+     #   headers = headers[:-1] + ['swa_te_loss', 'swa_te_acc'] + headers[-1:]
+      #  swa_res = {'loss': None, 'accuracy': None}
     
     logger = utils.Logger(args.checkpoint, headers)
 
     for e in range(args.epochs):
+
         if args.optimizer=='swa':
-            lr= schedule(epoch)
-            utils.adjust_learning_rate(optimizer, lr)
+            lr= schedule(e)
+            utils.adjust_learning_rate(opt, lr)
         else:    
             lr = utils.cosine_lr(opt, args.lr, e, args.epochs)
         
@@ -116,10 +117,10 @@ def main(args):
                      train_acc / train_n * 100, test_acc / test_n * 100)
         
         if args.optimizer =='swa'  and (epoch + 1) >= args.swa_start and args.eval_freq>1:
-            if epoch == 0 or epoch % args.eval_freq == args.eval_freq - 1 or epoch == args.epochs - 1:
-                optimizer.swap_swa_sgd()
-                optimizer.bn_update(train_loaders, model, device='cuda')
-                optimizer.swap_swa_sgd()
+            if e == 0 or e % args.eval_freq == args.eval_freq - 1 or e == args.epochs - 1:
+                opt.swap_swa_sgd()
+                opt.bn_update(train_loaders, model, device='cuda')
+                opt.swap_swa_sgd()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -144,6 +145,7 @@ if __name__ == "__main__":
     parser.add_argument('--swa_lr', type=float, default=0.05)
     #BatchEVAL
     parser.add_argument('--eval_freq', type= int, default=1)
-    
+    parser.add_argument('--momentum', type=float, default=0.9)
+
     args = parser.parse_args()
     main(args)
