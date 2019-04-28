@@ -10,8 +10,8 @@
 
 ### CIFAR-100
 |Model|This implementaion |Shake-shake|Shake-shake with cutout|
-|:---:|:---:|:---:||:---:||:---:|
-|ResNeXt29-2x4x64d |15.58 | 15.20|
+|:---:|:---:|:---:|:---:|
+|ResNeXt29-2x4x64d | TODO |15.58 | 15.20|
 
 ## Train ResNet29-2x64d  with cutout size 8 and SGD optimizer for CIFAR-100 
 ```
