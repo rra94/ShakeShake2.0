@@ -69,7 +69,10 @@ All experiments are run on one NVIDIA RTX2080 Ti.
 |State of the Art([GPIPE](https://arxiv.org/pdf/1811.06965v4.pdf)) |  - | - | 9.43|
 
 
-Our method achieves results comparable to 
+Our method achieves results comparable to the author' implementation in.
+
+### Discussion
+
 
 ## Future Steps
 
