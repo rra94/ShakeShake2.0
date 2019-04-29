@@ -51,7 +51,7 @@ def main(args):
         opt = optim.SGD(model.parameters(),lr=args.lr,momentum=args.momentum ,weight_decay=args.weight_decay,nesterov=args.nesterov)
     
     if args.optimizer == 'abd':
-        opt= abd.AdaBound(model.parameters(), lr=args.lr, gamma= args.momentum, weight_decay=args.weight_decay, final_lr=0.1)
+        opt= abd.AdaBound(model.parameters(), lr=args.lr, gamma= args.momentum, weight_decay=args.weight_decay, final_lr=args.final_lr)
     
     loss_func = nn.CrossEntropyLoss().cuda()
 
@@ -133,7 +133,8 @@ if __name__ == "__main__":
     #new-optimizers
     parser.add_argument("--optimizer", type=str, default='sdg')
     parser.add_argument('--swa_start', type=float, default=161)
-    parser.add_argument('--swa_lr', type=float, default=0.05)
+    parser.add_argument('--swa_lr', type=float, default=0.025)
+    parser.add_argument('--final_lr', type =int, default=0.1)
     #BatchEVAL
     parser.add_argument('--eval_freq', type= int, default=1)
     parser.add_argument('--momentum', type=float, default=0.9)

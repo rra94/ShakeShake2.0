@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*  
 import torch
+from torch.autograd import Variable
 import os
 import math
 import json
@@ -73,7 +74,7 @@ def eval_epoch(test_loader, model):
             y = model(x)
             loss = loss_func(y, t)
             test_loss += loss.item() * t.size(0)
-            test_acc += utils.accuracy(y, t).item()
+            test_acc += accuracy(y, t).item()
             test_n += t.size(0)
     return (test_loss, test_acc, test_n) 
 
