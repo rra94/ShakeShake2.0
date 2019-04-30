@@ -80,10 +80,10 @@ def eval_epoch(test_loader, model):
 
 class Logger:
 
-    def __init__(self, log_dir, headers):
+    def __init__(self, log_dir, headers, mod):
         self.log_dir = log_dir
         os.makedirs(log_dir, exist_ok=True)
-        self.f = open(os.path.join(log_dir, "log.txt"), "w")
+        self.f = open(os.path.join(log_dir, str(mod)+"log.txt"), "w")
         header_str = "\t".join(headers + ["EndTime."])
         self.print_str = "\t".join(["{}"] + ["{:.6f}"] * (len(headers) - 1) + ["{}"])
 

@@ -69,7 +69,7 @@ def main(args):
      #   headers = headers[:-1] + ['swa_te_loss', 'swa_te_acc'] + headers[-1:]
       #  swa_res = {'loss': None, 'accuracy': None}
     
-    logger = utils.Logger(args.checkpoint, headers)
+    logger = utils.Logger(args.checkpoint, headers, mod = args.optimizer)
 
     for e in range(args.epochs):
 
