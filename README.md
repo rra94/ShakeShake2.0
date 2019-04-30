@@ -77,7 +77,7 @@ Here we discuss the impact of our design choices:
 
 #### ResNeXt
 
-We use a depth of 29 as per [3] however a depth of [26] should also works as per [2] however initial training time doesn't really change much between these two depths. The batch size is kept at 128. 
+We use a depth of 29 as per [3] however a depth of 26 should also works as per [2] however initial training time doesn't really change much between these two depths. The batch size is kept at 128. 
 
 #### On Cutout
 
