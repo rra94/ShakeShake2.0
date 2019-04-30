@@ -37,7 +37,7 @@ Specifically we use the Shake-Shake-Image (SSI) regularization i.e. "Shake" for 
 
 Apart from horizontal flip and random crop we perfom the following data agumentations as well:
 
-* Cutout [2]: A small, randomly selected patch(s) of the image is masked for each image before it is used for training. The authors claim that the cutout technique simulates occluded examples and encourages the model to take more minor features into consideration when making decisions, rather than relying on the presence of a few major features.
+* Cutout [2]: A small, randomly selected patch(s) of the image is masked for each image before it is used for training. The authors claim that the cutout technique simulates occluded examples and encourages the model to take more minor features into consideration when making decisions, rather than relying on the presence of a few major features. Cutout is very easy to implement and does not add major overheads to the runtime.
 
 ### Otimizers
 
@@ -73,6 +73,27 @@ Our method achieves results comparable to the author' implementation in.
 
 ### Discussion
 
+Here we discuss the impact of our design choices:
+
+#### ResNeXt
+
+We use a depth of 29 as per [3] however a depth of [26] should also works as per [2] however initial training time doesn't really change much between these two depths. The batch size is kept at 128. 
+
+#### On Cutout
+
+Cutout is easy to implement and doesn't affect the train time.
+
+#### On ShakeShake
+
+Shakeshake increases the train time as due to the perturbation, the model has to be run for >1500 epohcs. The current implementation takes about 10 mins per epoch so it would take ~12 days to train. Another downside is that Shakeshake is made for residual networks so we may need differnt techniques like shakedrop which are architecture agnostic. 
+
+#### On Optimizers
+
+Preliminary results show that while the train time is similar for all three optimizers (SGD,ADABOUND, SWA) we see that adabound coverges slightly faster than  SWA which converges faster than just SGD. An intertesting observation is that the test errors are lower then train when using SWA and Adabound. 
+
+**Learning Rates (LR):** With SDG, we use cosine annealing as suggested in [3]. SWA and Adabound have internal learning rate annealing schedules. We keep the initial learning rates at 0.025 for all experiments as per [3]. 
+
+Overall Shakeshake + cutout is a promissing method but it takes a long time to train. 
 
 ## Future Steps
 
