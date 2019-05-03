@@ -6,60 +6,60 @@ Achieve State of the ART(SOTA) on [CIFAR-100](https://www.cs.toronto.edu/~kriz/c
 
 ### Dataset details
 
-CIFAR-100 dataset has 100 classes containing 600 images each. There are 500 training images and 100 testing images per class. The 100 classes in the CIFAR-100 are grouped into 20 superclasses. Each image comes with a "fine" label (the class to which it belongs) and a "coarse" label (the superclass to which it belongs). 
+CIFAR-100 dataset has 100 classes containing 600 images each. There are 500 training images and 100 testing images per class. The 100 classes in the CIFAR-100 are grouped into 20 superclasses. Each image comes with a "fine" label (the class to which it belongs) and a "coarse" label (the superclass to which it belongs).
 
-We perform 100 class-classification. 
+We perform 100 class-classification.
 
 
 ## Methodology choices
 
-Even though there are models with higher accuracy like [GPIPE](https://arxiv.org/pdf/1811.06965v4.pdf) and [Autoagumet](https://arxiv.org/pdf/1805.09501.pdf). These models are not replicable easily in real life. For instance, AutoAgument used 5000 hours of GPU time to train on CIFAR-10 then uses the same polies on CIFAR 100. On the other had [GPIPE](https://arxiv.org/pdf/1811.06965v4.pdf) useas a vast ameoba net which is trained on [ImageNet](http://www.image-net.org/) and then performs transfer learning. Thus, we go with the next best set of methods nameley ResNeXt with Shake-Shake [3]. We also choose newer optimizers for faster convergence [4,5]. 
+Even though there are models with higher accuracy like [GPIPE](https://arxiv.org/pdf/1811.06965v4.pdf) and [AutoAugment](https://arxiv.org/pdf/1805.09501.pdf). These models are not replicable easily in real life. For instance, AutoAugment used 5000 hours of GPU time to train on CIFAR-10 then uses the same policies on CIFAR 100. On the other had [GPIPE](https://arxiv.org/pdf/1811.06965v4.pdf) useas a vast amoeba net which is trained on [ImageNet](http://www.image-net.org/) and then performs transfer learning. Thus, we go with the next best set of methods namely ResNeXt with Shake-Shake [3]. We also choose newer optimizers for faster convergence [4,5].
 
-Here we discuss the design choices for our experiments. 
+Here we discuss the design choices for our experiments.
 
 ### Architecture
 
-* ResNeXt [1]:  We use the ResNeXt29-2x4x64d(The network has a depth of 29,  2 residual branches with 4 grouped convolutions and the first residualblock has a width of 64). We use the same model as [2] to replicate their results.
+* ResNeXt [1]:  We use the ResNeXt29-2x4x64d(The network has a depth of 29,  2 residual branches with 4 grouped convolutions and the first residual block has a width of 64). We use the same model as [2] to replicate their results.
 
-### Regularization 
+### Regularization
 
 Shake Shake [3]: This is a new regularization technique aimed at helping deep learning practitioners faced with an overfit problem. The idea is to replace, in a multi-branch network, the standard summation of parallel branches with a stochastic affine combination.
 
-"Shake" means that all scaling coefficients are overwritten with new random numbers before the pass.  "Even" means that all scaling coefficients are set to 0.5 before the pass.  "Keep" means that we keep, for the backward pass, the scaling coefficients used during the forward pass.  "Batch" means that, for each residual block_i, we apply the same scaling coefficientfor all the images in the mini-batch.   "Image" means that,  for each residual block_i,  we apply a different scaling coefficient for each image in the mini-batch.
+"Shake" means that all scaling coefficients are overwritten with new random numbers before the pass.  "Even" means that all scaling coefficients are set to 0.5 before the pass.  "Keep" means that we keep, for the backward pass, the scaling coefficients used during the forward pass.  "Batch" means that, for each residual block_i, we apply the same scaling coefficients for all the images in the mini-batch.   "Image" means that,  for each residual block_i,  we apply a different scaling coefficient for each image in the mini-batch.
 
-Specifically we use the Shake-Shake-Image (SSI) regularization i.e. "Shake" for both forward and backward passes and the level is set to "Image". By level we mean: Letx_0 denote the original input mini-batch tensor of dimensions 128x3x32x32. The first dimension « stacks » 128 images of dimensions 3x32x32. Inside the secondstage of a 26 2x32d model, this tensor is transformed into a mini-batch tensorxiof dimensions 128x64x16x16. Applying Shake-Shake regularization at the Image level means slicing this tensor along the first dimension and, for each of the 128 slices, multiplying the j slice (of dimensions 64x16x16) with a scalar $α_{i,j}$(or $(1−α)_{i,j}$).
+Specifically we use the Shake-Shake-Image (SSI) regularization i.e. "Shake" for both forward and backward passes and the level is set to "Image". By level we mean: Letx_0 denote the original input mini-batch tensor of dimensions 128x3x32x32. The first dimension « stacks » 128 images of dimensions 3x32x32. Inside the second stage of a 26 2x32d model, this tensor is transformed into a mini-batch tensor of dimensions 128x64x16x16. Applying Shake-Shake regularization at the Image level means slicing this tensor along the first dimension and, for each of the 128 slices, multiplying the j slice (of dimensions 64x16x16) with a scalar $α_{i,j}$(or $(1−α)_{i,j}$).
 
 ### Weight Initialization
 
-* Random weight initializations are used. 
+* Random weight initializations are used.
 
-### Data Agumentation
+### Data Augmentation
 
-Apart from horizontal flip and random crop we perfom the following data agumentations as well:
+Apart from horizontal flip and random crop we perform the following data augmentations as well:
 
 * Cutout [2]: A small, randomly selected patch(s) of the image is masked for each image before it is used for training. The authors claim that the cutout technique simulates occluded examples and encourages the model to take more minor features into consideration when making decisions, rather than relying on the presence of a few major features. Cutout is very easy to implement and does not add major overheads to the runtime.
 
-### Otimizers
+### Optimizers
 
 We consider the following optimizers:
 
-* SGD: We first use the standard stochastic gradient decent.
+* SGD: We first use the standard stochastic gradient descent.
 
-* Adabound [4]: AdaBound is an optimizer that behaves like Adam at the beginning of training, and gradually transforms to SGD at the end. The ``final_lr`` parameter indicates AdaBound would transforms to an SGD with this learning rate. It is not very sensitive to its hyperparameters. 
+* Adabound [4]: AdaBound is an optimizer that behaves like Adam at the beginning of training, and gradually transforms to SGD at the end. The ``final_lr`` parameter indicates AdaBound would transforms to an SGD with this learning rate. It is not very sensitive to its hyperparameters.
 
 * SWA [5]:  The key idea of SWA is to average multiple samples produced by SGD with a modified learning rate schedule. We use a cyclical learning rate schedule that causes SGD to explore the set of points in the weight space corresponding to high-performing networks. The authors claim that SWA converges more quickly than SGD, and to wider optima that provide higher test accuracy.
 
 ### Normalization
 
-Each branch has batch nromalization.
+Each branch has batch normalization.
 
 ## Results
 
-All experiments are run on one NVIDIA RTX2080 Ti. 
+All experiments are run on one NVIDIA RTX2080 Ti.
 
 ### CIFAR-100 (Best shot Error Rate)
 
-|Model|This implementaion |Epochs |Paper|
+|Model|This implementation |Epochs |Paper|
 |:---:|:---:|:---:|:---:|
 |ResNeXt29-2x4x64d | - | -  |16.56 |
 |ResNeXt29-2x4x64d + shakeshake | - | 1800 |15.58 |
@@ -68,7 +68,7 @@ All experiments are run on one NVIDIA RTX2080 Ti.
 |ResNeXt29-2x4x64d + shakeshake + cutout + SWA| TODO | 1800 |NA|
 |State of the Art([GPIPE](https://arxiv.org/pdf/1811.06965v4.pdf)) |  - | - | 9.43|
 
-The 
+The
 
 Our method achieves results comparable to the author' implementation in.
 
@@ -78,7 +78,7 @@ Here we discuss the impact of our design choices:
 
 #### ResNeXt
 
-We use a depth of 29 as per [3] however a depth of 26 should also works as per [2]. The batch size is kept at 128. 
+We use a depth of 29 as per [3] however a depth of 26 should also works as per [2]. The batch size is kept at 128.
 
 #### On Cutout
 
@@ -86,34 +86,34 @@ Cutout is easy to implement and doesn't affect the train time.
 
 #### On ShakeShake
 
-Shakeshake increases the train time as due to the perturbation, the model has to be run for >1500 epohcs. The current implementation takes about 10 mins per epoch so it would take ~12 days to train. Another downside is that Shakeshake is made for residual networks so we may need differnt techniques like shakedrop which are architecture agnostic. 
+Shakeshake increases the train time as due to the perturbation, the model has to be run for >1500 epochs. The current implementation takes about 10 mins per epoch so it would take ~12 days to train. Another downside is that Shakeshake is made for residual networks so we may need different techniques like shakedrop which are architecture agnostic.
 
 #### On Optimizers
 
-Preliminary results show that while the train time is similar for all three optimizers (SGD,ADABOUND, SWA) we see that adabound coverges slightly faster than  SWA which converges faster than just SGD. An intertesting observation is that the test errors are lower then train when using SWA and Adabound. 
+Preliminary results show that while the train time is similar for all three optimizers (SGD,ADABOUND, SWA) we see that adabound converges slightly faster than  SWA which converges faster than just SGD. An interesting observation is that the test errors are lower then train when using SWA and Adabound.
 
-**Learning Rates (LR):** With SDG, we use cosine annealing without restarts as suggested in [3]. In layman terms, Cosine Annealing uses a cosine fuction to reduce LR from a maxima to a minima. SWA and Adabound have internal learning rate annealing schedules. 
+**Learning Rates (LR):** With SDG, we use cosine annealing without restarts as suggested in [3]. In layman terms, Cosine Annealing uses a cosine function to reduce LR from a maxima to a minima. SWA and Adabound have internal learning rate annealing schedules.
 
-We keep the initial learning rates at 0.025 for all experiments as per [3]. 
+We keep the initial learning rates at 0.025 for all experiments as per [3].
 
-Overall Shakeshake + cutout is a promissing method but it takes a long time to train. 
+Overall Shakeshake + cutout is a promising method but it takes a long time to train.
 
 ## Future Steps
 
-* Replace BatchNorm with [Fixup initalization](https://arxiv.org/abs/1901.09321)
+* Replace BatchNorm with [Fixup initialization](https://arxiv.org/abs/1901.09321)
 
 * Try [dropblock](https://papers.nips.cc/paper/8271-dropblock-a-regularization-method-for-convolutional-networks.pdf) instead of cutout
 
-* Alternatively, a more [recent work](https://arxiv.org/pdf/1805.11272.pdf) examimines mixed-example (mixing multiple images) based data agumetation techniques and find improvements. It would be interesting to see how these methods pan out when compared to cutout as well. 
+* Alternatively, a more [recent work](https://arxiv.org/pdf/1805.11272.pdf) examimines mixed-example (mixing multiple images) based data augmentation techniques and find improvements. It would be interesting to see how these methods pan out when compared to cutout as well.
 
-* Try (PyramidNet+ShakeDrop)[https://arxiv.org/pdf/1802.02375.pdf]
+* Try [PyramidNet+ShakeDrop](https://arxiv.org/pdf/1802.02375.pdf)
 
-## Train ResNet29-2x64d  with cutout size 8 and SGD optimizer for CIFAR-100 
+## Train ResNet29-2x64d  with cutout size 8 and SGD optimizer for CIFAR-100
 
 ### Dependencies
 
 * Pytorch 1.0.1
-* Python 3.6+ 
+* Python 3.6+
 * Install all from requirements.txt
 
 ```
@@ -199,3 +199,5 @@ CUDA_VISIBLE_DEVICES=0,1 python train.py --label 100 --depth 29 --w_base 64 --lr
 ```
 
 This code is built over [this repo](https://github.com/owruby/shake-shake_pytorch)
+
+
