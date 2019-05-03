@@ -71,7 +71,7 @@ All experiments are run on one NVIDIA RTX2080 Ti.
 |ResNeXt29-2x4x64d + shakeshake + cutout + SWA| -| -| NA |NA|
 |State of the Art([GPIPE](https://arxiv.org/pdf/1811.06965v4.pdf)) | - |- | - | 9.43|
 
-`-` indicates that these experiemnts were not run. `NA` indicates that these experiments were not run in any past literature. 
+`-` indicates that these experiemnts were not run. `NA` indicates that these experiments were not run in any past literature.
 
 For SWA, we do not report the results as the implemation needs some correction.
 
@@ -99,7 +99,9 @@ Preliminary results show that while the train time is similar for all three opti
 
 We keep the initial learning rates at 0.025 for all experiments as per [3].
 
-Overall Shakeshake + cutout is a promising method but it takes a long time to train.
+Overall Shakeshake + cutout is a promising method but it takes a long time to train. We can see that  the error rate is already better than [ResNet-100](https://arxiv.org/pdf/1603.05027v3.pdf) which was state of the art in 2016. We expect the implementation to reach ~15% error rate by 1800 epochs.
+
+With Adabound we see that the convergence is slightly faster however there is no improvement in the overall error rate (so far).
 
 ## Future Steps
 
@@ -202,5 +204,8 @@ CUDA_VISIBLE_DEVICES=0,1 python train.py --label 100 --depth 29 --w_base 64 --lr
 ```
 
 This code is built over [this repo](https://github.com/owruby/shake-shake_pytorch)
+
+
+
 
 
