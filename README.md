@@ -67,11 +67,12 @@ All experiments are run on one NVIDIA RTX2080 Ti.
 |ResNeXt29-2x4x64d | - | -|-  |16.56 |
 |ResNeXt29-2x4x64d + shakeshake | -|- | 1800 |15.58 |
 |ResNeXt29-2x4x64d + shakeshake+  cutout + SDG| 765| 22.10| 1800| 15.20|
-|ResNeXt29-2x4x64d + shakeshake + cutout + ADABOUND| 645|  29.8| 1800 |NA|
-|ResNeXt29-2x4x64d + shakeshake + cutout + SWA| -| -| 1800 |NA|
+|ResNeXt29-2x4x64d + shakeshake + cutout + ADABOUND| 645|  29.8| NA |NA|
+|ResNeXt29-2x4x64d + shakeshake + cutout + SWA| -| -| NA |NA|
 |State of the Art([GPIPE](https://arxiv.org/pdf/1811.06965v4.pdf)) | - |- | - | 9.43|
 
-`-` indicates that these experiemnts were not run. 
+`-` indicates that these experiemnts were not run. `NA` indicates that these experiments were not run in any past literature. 
+
 For SWA, we do not report the results as the implemation needs some correction.
 
 ### Discussion
