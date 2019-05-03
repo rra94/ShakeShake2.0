@@ -66,8 +66,8 @@ All experiments are run on one NVIDIA RTX2080 Ti.
 |-----|--------|----------|-------|----------|
 |ResNeXt29-2x4x64d | - | -|-  |16.56 |
 |ResNeXt29-2x4x64d + shakeshake | -|- | 1800 |15.58 |
-|ResNeXt29-2x4x64d + shakeshake+  cutout + SDG| 765| 77.2| 1800| 15.20|
-|ResNeXt29-2x4x64d + shakeshake + cutout + ADABOUND| 645|  70.2| 1800 |NA|
+|ResNeXt29-2x4x64d + shakeshake+  cutout + SDG| 765| 22.10| 1800| 15.20|
+|ResNeXt29-2x4x64d + shakeshake + cutout + ADABOUND| 645|  29.8| 1800 |NA|
 |ResNeXt29-2x4x64d + shakeshake + cutout + SWA| -| -| 1800 |NA|
 |State of the Art([GPIPE](https://arxiv.org/pdf/1811.06965v4.pdf)) | - |- | - | 9.43|
 
