@@ -89,7 +89,7 @@ Cutout is easy to implement and doesn't affect the train time.
 
 #### On ShakeShake
 
-Shakeshake increases the train time as due to the perturbation, the model has to be run for >1500 epochs. The current implementation takes about 10 mins per epoch so it would take ~12 days to train. Another downside is that Shakeshake is made for residual networks so we may need different techniques like shakedrop which are architecture agnostic.
+Shakeshake increases the train time as due to the perturbation, the model has to be run for >1500 epochs. The current implementation takes about 6 mins per epoch so it would take ~8 days to train. Another downside is that Shakeshake is made for residual networks so we may need different techniques like shakedrop which are architecture agnostic.
 
 #### On Optimizers
 
