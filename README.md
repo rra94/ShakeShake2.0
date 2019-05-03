@@ -102,6 +102,8 @@ Overall Shakeshake + cutout is a promissing method but it takes a long time to t
 
 * Try [dropblock](https://papers.nips.cc/paper/8271-dropblock-a-regularization-method-for-convolutional-networks.pdf) instead of cutout
 
+* Alternatively, a more [recent work](https://arxiv.org/pdf/1805.11272.pdf) examimines mixed-example (mixing multiple images) based data agumetation techniques and find improvements. It would be interesting to see how these methods pan out when compared to cutout as well. 
+
 * Try (PyramidNet+ShakeDrop)[https://arxiv.org/pdf/1802.02375.pdf]
 
 ## Train ResNet29-2x64d  with cutout size 8 and SGD optimizer for CIFAR-100 
