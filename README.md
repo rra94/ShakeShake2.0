@@ -78,7 +78,7 @@ Here we discuss the impact of our design choices:
 
 #### ResNeXt
 
-We use a depth of 29 as per [3] however a depth of 26 should also works as per [2] however initial training time doesn't really change much between these two depths. The batch size is kept at 128. 
+We use a depth of 29 as per [3] however a depth of 26 should also works as per [2]. The batch size is kept at 128. 
 
 #### On Cutout
 
@@ -92,7 +92,9 @@ Shakeshake increases the train time as due to the perturbation, the model has to
 
 Preliminary results show that while the train time is similar for all three optimizers (SGD,ADABOUND, SWA) we see that adabound coverges slightly faster than  SWA which converges faster than just SGD. An intertesting observation is that the test errors are lower then train when using SWA and Adabound. 
 
-**Learning Rates (LR):** With SDG, we use cosine annealing as suggested in [3]. SWA and Adabound have internal learning rate annealing schedules. We keep the initial learning rates at 0.025 for all experiments as per [3]. 
+**Learning Rates (LR):** With SDG, we use cosine annealing without restarts as suggested in [3]. In layman terms, Cosine Annealing uses a cosine fuction to reduce LR from a maxima to a minima. SWA and Adabound have internal learning rate annealing schedules. 
+
+We keep the initial learning rates at 0.025 for all experiments as per [3]. 
 
 Overall Shakeshake + cutout is a promissing method but it takes a long time to train. 
 
