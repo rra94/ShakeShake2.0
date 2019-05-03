@@ -62,7 +62,7 @@ All experiments are run on one NVIDIA RTX2080 Ti.
 
 
 
-|Model| Epochs (ours)  |Error Rate (ouurs)|Epochs (paper) |Error Rate (paper)|
+|Model| Epochs (ours)  |Error Rate (ours)|Epochs (paper) |Error Rate (paper)|
 |-----|--------|----------|-------|----------|
 |ResNeXt29-2x4x64d | - | -|-  |16.56 |
 |ResNeXt29-2x4x64d + shakeshake | -|- | 1800 |15.58 |
