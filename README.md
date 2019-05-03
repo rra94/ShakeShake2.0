@@ -19,15 +19,15 @@ Here we discuss the design choices for our experiments.
 
 ### Architecture
 
-* ResNeXt [1]:  We use the ResNeXt29-2x4x64d(The network has a depth of 29,  2 residual branches with 4 grouped convolutions and the first residual block has a width of 64). We use the same model as [2] to replicate their results.
+* ResNeXt [1]:  We use the ResNeXt29-2x4x64d(The network has a depth of 29,  2 residual branches with 4 grouped convolutions and the first residual block has a width of 64). We use the same model as [3] to replicate their results.
 
 ### Regularization
 
 Shake Shake [3]: This is a new regularization technique aimed at helping deep learning practitioners faced with an overfit problem. The idea is to replace, in a multi-branch network, the standard summation of parallel branches with a stochastic affine combination.
 
-"Shake" means that all scaling coefficients are overwritten with new random numbers before the pass.  "Even" means that all scaling coefficients are set to 0.5 before the pass.  "Keep" means that we keep, for the backward pass, the scaling coefficients used during the forward pass.  "Batch" means that, for each residual block_i, we apply the same scaling coefficients for all the images in the mini-batch.   "Image" means that,  for each residual block_i,  we apply a different scaling coefficient for each image in the mini-batch.
+"Shake" means that all scaling coefficients are overwritten with new random numbers before the pass.  "Even" means that all scaling coefficients are set to 0.5 before the pass.  "Keep" means that we keep, for the backward pass, the scaling coefficients used during the forward pass.  "Batch" means that, for each residual block, we apply the same scaling coefficients for all the images in the mini-batch.  "Image" means that  we apply a different scaling coefficient for each image in the mini-batch in a given resuidual block.
 
-Specifically we use the Shake-Shake-Image (SSI) regularization i.e. "Shake" for both forward and backward passes and the level is set to "Image". By level we mean: Letx_0 denote the original input mini-batch tensor of dimensions 128x3x32x32. The first dimension « stacks » 128 images of dimensions 3x32x32. Inside the second stage of a 26 2x32d model, this tensor is transformed into a mini-batch tensor of dimensions 128x64x16x16. Applying Shake-Shake regularization at the Image level means slicing this tensor along the first dimension and, for each of the 128 slices, multiplying the j slice (of dimensions 64x16x16) with a scalar $α_{i,j}$(or $(1−α)_{i,j}$).
+Specifically, we use the Shake-Shake-Image (SSI) regularization i.e. "Shake" for both forward and backward passes and the level is set to "Image". By level we mean: Letx_0 denote the original input mini-batch tensor of dimensions 128x3x32x32. The first dimension stacks 128 images of dimensions 3x32x32. Inside the second stage of a 26 2x32d model, this tensor is transformed into a mini-batch tensor of dimensions 128x64x16x16. Applying Shake-Shake regularization at the Image level means slicing this tensor along the first dimension and, for each of the 128 slices, multiplying the j slice (of dimensions 64x16x16) with a scalar $α_{i,j}$(or $(1−α)_{i,j}$).
 
 ### Weight Initialization
 
@@ -43,9 +43,9 @@ Apart from horizontal flip and random crop we perform the following data augment
 
 We consider the following optimizers:
 
-* SGD: We first use the standard stochastic gradient descent.
+* SGD: We first use stochastic gradient descent with cosine annealing without restarts.
 
-* Adabound [4]: AdaBound is an optimizer that behaves like Adam at the beginning of training, and gradually transforms to SGD at the end. The ``final_lr`` parameter indicates AdaBound would transforms to an SGD with this learning rate. It is not very sensitive to its hyperparameters.
+* Adabound [4]: AdaBound is an optimizer that behaves like Adam at the beginning of training, and gradually transforms to SGD at the end. The ``final_lr`` parameter indicates AdaBound would transforms to an SGD with this learning rate. According to the authors, Adabound is not very sensitive to its hyperparameters.
 
 * SWA [5]:  The key idea of SWA is to average multiple samples produced by SGD with a modified learning rate schedule. We use a cyclical learning rate schedule that causes SGD to explore the set of points in the weight space corresponding to high-performing networks. The authors claim that SWA converges more quickly than SGD, and to wider optima that provide higher test accuracy.
 
@@ -59,18 +59,20 @@ All experiments are run on one NVIDIA RTX2080 Ti.
 
 ### CIFAR-100 (Best shot Error Rate)
 
-|Model|This implementation |Epochs |Paper|
-|:---:|:---:|:---:|:---:|
-|ResNeXt29-2x4x64d | - | -  |16.56 |
-|ResNeXt29-2x4x64d + shakeshake | - | 1800 |15.58 |
-|ResNeXt29-2x4x64d + shakeshake+  cutout + SDG| TODO | 1800| 15.20|
-|ResNeXt29-2x4x64d + shakeshake + cutout + ADABOUND| TODO  | 1800 |NA|
-|ResNeXt29-2x4x64d + shakeshake + cutout + SWA| TODO | 1800 |NA|
-|State of the Art([GPIPE](https://arxiv.org/pdf/1811.06965v4.pdf)) |  - | - | 9.43|
 
-The
 
-Our method achieves results comparable to the author' implementation in.
+
+|Model| Epochs (ours)  |Error Rate (ouurs)|Epochs (paper) |Error Rate (paper)|
+|-----|--------|----------|-------|----------|
+|ResNeXt29-2x4x64d | - | -|-  |16.56 |
+|ResNeXt29-2x4x64d + shakeshake | -|- | 1800 |15.58 |
+|ResNeXt29-2x4x64d + shakeshake+  cutout + SDG| 765| 77.2| 1800| 15.20|
+|ResNeXt29-2x4x64d + shakeshake + cutout + ADABOUND| 645|  70.2| 1800 |NA|
+|ResNeXt29-2x4x64d + shakeshake + cutout + SWA| -| -| 1800 |NA|
+|State of the Art([GPIPE](https://arxiv.org/pdf/1811.06965v4.pdf)) | - |- | - | 9.43|
+
+`-` indicates that these experiemnts were not run. 
+For SWA, we do not report the results as the implemation needs some correction.
 
 ### Discussion
 
