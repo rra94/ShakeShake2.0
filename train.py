@@ -34,12 +34,15 @@ def main(args):
     cudnn.benckmark = True
     
     if args.optimizer=='sgd':
+        print("using sgd")
         opt = optim.SGD(model.parameters(),lr=args.lr,momentum=args.momentum ,weight_decay=args.weight_decay,nesterov=args.nesterov)
     
     elif args.optimizer == 'abd':
+        print("using adabound")
         opt= abd.AdaBound(model.parameters(), lr=args.lr, gamma= args.gamma, weight_decay=args.weight_decay, final_lr=args.final_lr)
     
     elif args.optimizer=='swa':
+        print("using swa")
         opt=optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
         steps_per_epoch = len(train_loader.dataset) / args.batch_size
         steps_per_epoch = int(steps_per_epoch)
