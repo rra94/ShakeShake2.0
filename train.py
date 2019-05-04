@@ -33,7 +33,7 @@ def main(args):
     
     cudnn.benckmark = True
     
-    if args.optimizer=='sdg':
+    if args.optimizer=='sgd':
         opt = optim.SGD(model.parameters(),lr=args.lr,momentum=args.momentum ,weight_decay=args.weight_decay,nesterov=args.nesterov)
     
     elif args.optimizer == 'abd':
@@ -99,7 +99,7 @@ if __name__ == "__main__":
     parser.add_argument("--half_length", type=int, default=8)
     parser.add_argument("--nholes", type=int, default=1)
     #new-optimizers
-    parser.add_argument("--optimizer", type=str, default='sdg')
+    parser.add_argument("--optimizer", type=str, default='sgd')
     parser.add_argument('--swa_start', type=float, default=161)
     parser.add_argument('--swa_lr', type=float, default=0.025)
     parser.add_argument('--final_lr', type =int, default=0.1)
