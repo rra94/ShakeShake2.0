@@ -28,12 +28,21 @@ def cosine_lr(opt, base_lr, e, epochs):
     return lr
 
 
-
 def accuracy(y, t):
     pred = y.data.max(1, keepdim=True)[1]
     acc = pred.eq(t.data.view_as(pred)).cpu().sum()
     return acc
 
+def schedule(epoch, opt, tot_epochs, swa_start, swa_lr, lr):
+    t = (epoch) / (swa_start if opt=='swa' else tot_epochs)
+    lr_ratio = swa_lr / lr if opt=='swa' else 0.01
+    if t <= 0.5:
+        factor = 1.0
+    elif t <= 0.9:
+        factor = 1.0 - (1.0 - lr_ratio) * (t - 0.5) / 0.4
+    else:
+        factor = lr_ratio
+    return lr * factor
 
 class cutout(object):
     def __init__(self, half_length,  nholes):
