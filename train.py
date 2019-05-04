@@ -67,7 +67,7 @@ def main(args):
             lr = utils.cosine_lr(opt, args.lr, e, args.epochs)
         
         #train
-        train_loss, train_acc, train_n= utils.train_epoch(train_loader, opt)
+        train_loss, train_acc, train_n= utils.train_epoch(train_loader, model, opt)
         #eval
         test_loss, test_acc, test_n = utils.eval_epoch(test_loader, model)
         
