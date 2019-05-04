@@ -95,7 +95,7 @@ Shakeshake increases the train time as due to the perturbation, the model has to
 
 Preliminary results show that while the train time is similar for all three optimizers (SGD,ADABOUND, SWA) we see that adabound converges slightly faster than  SWA which converges faster than just SGD. An interesting observation is that the test errors are lower then train when using SWA and Adabound.
 
-**Learning Rates (LR):** With SDG, we use cosine annealing without restarts as suggested in [3]. In layman terms, Cosine Annealing uses a cosine function to reduce LR from a maxima to a minima. SWA and Adabound have internal learning rate annealing schedules.
+**Learning Rates (LR):** With SDG, we use cosine annealing without restarts as suggested in [3]. In layman terms, Cosine Annealing uses a cosine function to reduce LR from a maxima to a minima. SWA has a cyclic learning rate as in the example in [5]. Adabound has internal learning rate annealing schedules.
 
 We keep the initial learning rates at 0.025 for all experiments as per [3].
 
@@ -134,11 +134,15 @@ CUDA_VISIBLE_DEVICES=0,1 python train.py --label 100 --depth 29 --w_base 64 --lr
 * batch evaluation with `--eval_freq`
 * switch cifar 10 and 100 with `-label 100`
 * set learning rate `--lr` (intial learning rates for SWA, ADABOUND)
-* set epochs with `-epochs
+* set epochs with `-epochs`
 * set momentum with `--momentum`
 * Change depth of resnet `--depth`
 * change weight decay `--weight_decay`
 * set batch size `--batch_size`
+
+### Adabound
+
+* gamma (learning rate speed fro adabound) `--gamma`
 
 
 ### SWA Functionality
