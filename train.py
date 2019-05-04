@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -80,26 +79,7 @@ def main(args):
             lr = utils.cosine_lr(opt, args.lr, e, args.epochs)
         
         #train
-        model.train()
-        train_loss, train_acc, train_n = 0, 0, 0
-        bar = tqdm(total=len(train_loader), leave=False)
-        
-        for x, t in train_loader:
-            x, t = Variable(x.cuda()), Variable(t.cuda())
-            y = model(x)
-            loss = loss_func(y, t)
-            opt.zero_grad()
-            loss.backward()
-            opt.step()
-
-            train_acc += utils.accuracy(y, t).item()
-            train_loss += loss.item() * t.size(0)
-            train_n += t.size(0)
-            bar.set_description("Loss: {:.4f}, Accuracy: {:.2f}".format(
-                train_loss / train_n, train_acc / train_n * 100), refresh=True)
-            bar.update()
-        bar.close()
-        
+        train_loss, train_acc, train_n= utils.train_epoch(train_loader, opt)
         #eval
         test_loss, test_acc, test_n = utils.eval_epoch(test_loader, model)
         

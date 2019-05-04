@@ -59,6 +59,28 @@ class cutout(object):
         img = img * mask
         return img
 
+def train_epoch(train_loader, model, opt):
+    loss_func= nn.CrossEntropyLoss().cuda()
+    model.train()
+    train_loss, train_acc, train_n = 0, 0, 0
+    bar = tqdm(total=len(train_loader), leave=False)
+
+    for x, t in train_loader:
+        x, t = Variable(x.cuda()), Variable(t.cuda())
+        y = model(x)
+        loss = loss_func(y, t)
+        opt.zero_grad()
+        loss.backward()
+        opt.step()
+
+        train_acc += accuracy(y, t).item()
+        train_loss += loss.item() * t.size(0)
+        train_n += t.size(0)
+        bar.set_description("Loss: {:.4f}, Accuracy: {:.2f}".format(train_loss / train_n, train_acc / train_n * 100), refresh=True)
+        bar.update()
+    bar.close()
+    return (train_loss, train_acc, train_n)
+
 def eval_epoch(test_loader, model):
     loss_func= nn.CrossEntropyLoss().cuda()
     model.eval()
