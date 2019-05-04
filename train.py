@@ -68,6 +68,8 @@ def main(args):
             utils.adjust_learning_rate(opt, lr)
         elif args.optimizer=='sgd':    
             lr = utils.cosine_lr(opt, args.lr, e, args.epochs)
+        else:
+            exit
         
         #train
         train_loss, train_acc, train_n= utils.train_epoch(train_loader, model, opt)
