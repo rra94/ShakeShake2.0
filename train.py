@@ -18,7 +18,6 @@ from models import ShakeResNet, ShakeResNeXt
 
 
 
-
 def main(args):
     
     if torch.cuda.device_count() > 1:
@@ -35,32 +34,22 @@ def main(args):
     
     cudnn.benckmark = True
     
-    def schedule(epoch):
-        t = (epoch) / (args.swa_start if args.optimizer=='swa' else args.epochs)
-        lr_ratio = args.swa_lr / args.lr if args.optimizer=='swa' else 0.01
-        if t <= 0.5:
-            factor = 1.0
-        elif t <= 0.9:
-            factor = 1.0 - (1.0 - lr_ratio) * (t - 0.5) / 0.4
-        else:
-            factor = lr_ratio
-        return args.lr * factor
-    
     if args.optimizer=='sdg':
         opt = optim.SGD(model.parameters(),lr=args.lr,momentum=args.momentum ,weight_decay=args.weight_decay,nesterov=args.nesterov)
     
-    if args.optimizer == 'abd':
-        opt= abd.AdaBound(model.parameters(), lr=args.lr, gamma= args.momentum, weight_decay=args.weight_decay, final_lr=args.final_lr)
+    elif args.optimizer == 'abd':
+        opt= abd.AdaBound(model.parameters(), lr=args.lr, gamma= args.gamma, weight_decay=args.weight_decay, final_lr=args.final_lr)
     
-    loss_func = nn.CrossEntropyLoss().cuda()
-
-    if args.optimizer=='swa':
+    elif args.optimizer=='swa':
         opt=optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
         steps_per_epoch = len(train_loader.dataset) / args.batch_size
         steps_per_epoch = int(steps_per_epoch)
         opt = swa(opt, swa_start=args.swa_start * steps_per_epoch,swa_freq=steps_per_epoch, swa_lr=args.swa_lr)
+    else:
+        print("not valid optimizer")
+        exit
 
-    
+    loss_func = nn.CrossEntropyLoss().cuda()
 
     headers = ["Epoch", "LearningRate", "TrainLoss", "TestLoss", "TrainAcc.", "TestAcc."]
     
@@ -73,9 +62,9 @@ def main(args):
     for e in range(args.epochs):
 
         if args.optimizer=='swa':
-            lr= schedule(e)
+            lr= utils.schedule(e, args.optimizer, args.epochs, args.swa_start, args.swa_lr, args.lr)
             utils.adjust_learning_rate(opt, lr)
-        else:    
+        elif args.optimizer=='sgd':    
             lr = utils.cosine_lr(opt, args.lr, e, args.epochs)
         
         #train
@@ -115,6 +104,9 @@ if __name__ == "__main__":
     parser.add_argument('--swa_start', type=float, default=161)
     parser.add_argument('--swa_lr', type=float, default=0.025)
     parser.add_argument('--final_lr', type =int, default=0.1)
+    parser.add_argument('--gamma', type=float, default=1e-3)
+    parser.add_argument('--beta1', default=0.9, type=float, help='Adam coefficients beta_1')
+    parser.add_argument('--beta2', default=0.999, type=float, help='Adam coefficients beta_2')
     #BatchEVAL
     parser.add_argument('--eval_freq', type= int, default=1)
     parser.add_argument('--momentum', type=float, default=0.9)
