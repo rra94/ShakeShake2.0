@@ -60,8 +60,6 @@ All experiments are run on one NVIDIA RTX2080 Ti.
 ### CIFAR-100 (Best shot Error Rate)
 
 
-
-
 |Model| Epochs (ours)  |Error Rate (ours)|Epochs (paper) |Error Rate (paper)|
 |-----|--------|----------|-------|----------|
 |ResNeXt29-2x4x64d | - | -|-  |16.56 |
@@ -99,7 +97,7 @@ Preliminary results show that while the train time is similar for all three opti
 
 We keep the initial learning rates at 0.025 for all experiments as per [3].
 
-Overall Shakeshake + cutout is a promising method but it takes a long time to train. We can see that  the error rate is already better than [Wide ResNet](https://arxiv.org/pdf/1904.09925v1.pdf) which was state of the art in 2017. We expect the implementation to reach ~15% error rate by 1800 epochs.
+Overall Shakeshake + cutout is a promising method but it takes a long time to train. We can see that  the error rate is already better than [Res2NeXt](https://export.arxiv.org/pdf/1904.01169) which was state of the art in 2018. We expect the implementation to reach ~15% error rate by 1800 epochs.
 
 With Adabound we see that the convergence is slightly faster however there is no improvement in the overall error rate (so far).
 
