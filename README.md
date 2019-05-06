@@ -67,7 +67,7 @@ All experiments are run on one NVIDIA RTX2080 Ti.
 |ResNeXt29-2x4x64d | - | -|-  |16.56 |
 |ResNeXt29-2x4x64d + shakeshake | -|- | 1800 |15.58 |
 |ResNeXt29-2x4x64d + shakeshake+  cutout + SDG| 1357 | 18.37 | 1800| 15.20|
-|ResNeXt29-2x4x64d + shakeshake + cutout + ADABOUND| 980|  24.73| NA |NA|
+|ResNeXt29-2x4x64d + shakeshake + cutout + ADABOUND| 1046|  24.4| NA |NA|
 |ResNeXt29-2x4x64d + shakeshake + cutout + SWA| -| -| NA |NA|
 |State of the Art([GPIPE](https://arxiv.org/pdf/1811.06965v4.pdf)) | - |- | - | 9.43|
 
@@ -149,7 +149,6 @@ CUDA_VISIBLE_DEVICES=0,1 python train.py --label 100 --depth 29 --w_base 64 --lr
 * set swa learning rate `--swa_lr`
 * set start epoch for swa `-swa_start`
 
-
 ## References
 
 
@@ -208,8 +207,3 @@ CUDA_VISIBLE_DEVICES=0,1 python train.py --label 100 --depth 29 --w_base 64 --lr
 ```
 
 This code is built over [this repo](https://github.com/owruby/shake-shake_pytorch)
-
-
-
-
-
