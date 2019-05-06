@@ -142,7 +142,7 @@ CUDA_VISIBLE_DEVICES=0,1 python train.py --label 100 --depth 29 --w_base 64 --lr
 
 ### Adabound
 
-* gamma (learning rate speed fro adabound) `--gamma`
+* gamma (learning rate speed for adabound) `--gamma`
 
 
 ### SWA Functionality
