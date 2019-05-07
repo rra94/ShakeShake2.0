@@ -71,6 +71,8 @@ All experiments are run on one NVIDIA RTX2080 Ti.
 
 `-` indicates that these experiemnts were not run. `NA` indicates that these experiments were not run in any past literature.
 
+![expt 1](shakeshake_sgd.png)
+
 For SWA, we do not report the results as the implementation needs some correction.
 
 ### Discussion
