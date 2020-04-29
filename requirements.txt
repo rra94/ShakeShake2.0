@@ -73,7 +73,7 @@ Pygments==2.3.1
 pyparsing==2.4.0
 pyrsistent==0.15.1
 python-dateutil==2.8.0
-pytz==2019.1
+pytz==2020.1
 PyWavelets==1.0.3
 PyYAML==5.1
 pyzmq==18.0.1
