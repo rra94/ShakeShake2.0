@@ -95,7 +95,7 @@ testpath==0.4.2
 torch==1.0.1.post2
 torchvision==0.2.2.post3
 tornado==6.0.2
-tqdm==4.31.1
+tqdm==4.51.0
 traitlets==4.3.2
 typing==3.6.6
 typing-extensions==3.7.2
