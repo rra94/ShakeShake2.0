@@ -76,7 +76,7 @@ python-dateutil==2.8.1
 pytz==2020.1
 PyWavelets==1.0.3
 PyYAML==5.1
-pyzmq==18.0.1
+pyzmq==22.0.0
 qtconsole==4.4.3
 requests==2.21.0
 scikit-image==0.15.0
